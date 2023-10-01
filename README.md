@@ -112,4 +112,52 @@ I see a hexadecimal representation of data on the boot partition.
 3. As the special file represents all the blocks of a partition, the content of all files of the root partition should be there. Pick a text file at random (for example a file in /usr/share/doc/) and try to find its content in the special file.
 
 
+## TASK 2: PREPARE AND PARTITION A DISK
+
+Before you plug in the disk, list the existing block devices. Using the findmnt command find all the partitions that are already mounted.
+```shell
+ben@ben-virtual-machine:/usr/share/doc/zip$ findmnt --real
+TARGET                                   SOURCE     FSTYPE     OPTIONS
+/                                        /dev/sda3  ext4       rw,relatime,errors=remount-ro
+├─/run/user/1000/doc                     portal     fuse.porta rw,nosuid,nodev,relatime,user_id=1000,group_id=1000
+├─/snap/core20/1974                      /dev/loop0 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/bare/5                           /dev/loop3 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/firefox/2987                     /dev/loop2 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/core22/858                       /dev/loop4 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/gnome-42-2204/120                /dev/loop5 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/gnome-3-38-2004/143              /dev/loop1 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/snap-store/959                   /dev/loop6 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/gtk-common-themes/1535           /dev/loop7 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/snapd/19457                      /dev/loop8 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/snap/snapd-desktop-integration/83     /dev/loop9 squashfs   ro,nodev,relatime,errors=continue,threads=single
+├─/boot/efi                              /dev/sda2  vfat       rw,relatime,fmask=0077,dmask=0077,codepage=437,iochars
+├─/media/ben/CDROM                       /dev/sr0   iso9660    ro,nosuid,nodev,relatime,nojoliet,check=s,map=n,blocks
+└─/var/snap/firefox/common/host-hunspell /dev/sda3[/usr/share/hunspell]
+                                                    ext4       ro,noexec,noatime,errors=remount-ro
+```
+
+2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its partitions you just attached.
+(note ben: probablement à refaire)
+```shell
+ben@ben-virtual-machine:~/Desktop$ findmnt --real
+TARGET                                   SOURCE     FSTYPE  OPTIONS
+/                                        /dev/sda3  ext4    rw,relatime,errors=remou
+├─/run/user/1000/doc                     portal     fuse.po rw,nosuid,nodev,relatime
+├─/snap/core22/858                       /dev/loop2 squashf ro,nodev,relatime,errors
+├─/snap/core20/1974                      /dev/loop1 squashf ro,nodev,relatime,errors
+├─/snap/bare/5                           /dev/loop0 squashf ro,nodev,relatime,errors
+├─/snap/firefox/2987                     /dev/loop3 squashf ro,nodev,relatime,errors
+├─/snap/gnome-3-38-2004/143              /dev/loop4 squashf ro,nodev,relatime,errors
+├─/snap/gnome-42-2204/120                /dev/loop6 squashf ro,nodev,relatime,errors
+├─/snap/snap-store/959                   /dev/loop7 squashf ro,nodev,relatime,errors
+├─/snap/gtk-common-themes/1535           /dev/loop5 squashf ro,nodev,relatime,errors
+├─/snap/snapd/19457                      /dev/loop8 squashf ro,nodev,relatime,errors
+├─/var/snap/firefox/common/host-hunspell /dev/sda3[/usr/share/hunspell]
+│                                                   ext4    ro,noexec,noatime,errors
+├─/snap/snapd-desktop-integration/83     /dev/loop9 squashf ro,nodev,relatime,errors
+├─/boot/efi                              /dev/sda2  vfat    rw,relatime,fmask=0077,d
+├─/mnt/istnewdisk                        /dev/sdb1  ext4    rw,relatime
+├─/media/ben/Ubuntu 22.04.3 LTS amd64    /dev/sr1   iso9660 ro,nosuid,nodev,relatime
+└─/media/ben/CDROM                       /dev/sr0   iso9660 ro,nosuid,nodev,relatime
+```
 
