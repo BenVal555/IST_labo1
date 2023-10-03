@@ -407,7 +407,7 @@ Verify that the partitions you created are labeled correctly.
 /dev/sdb2: UUID="53580d06-65f6-4853-8a18-2bf64f74a0a0" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="886d0b38-02"
 /dev/sdb1: UUID="2EF0-D8A9" BLOCK_SIZE="512" TYPE="vfat" PARTUUID="886d0b38-01"
 ```
-*Cela semble correct par rapport aux manipulations précédentes.*
+*Everything seems to be as expected.*
 
 There is another piece of information in the partition metadata. What does it do?
 
