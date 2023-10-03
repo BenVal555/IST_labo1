@@ -166,7 +166,8 @@ TARGET                                   SOURCE     FSTYPE     OPTIONS
 ```
 
 2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its partitions you just attached.
-As we can see below, the new block device sdb appeared in the list.
+
+**Answer:** As we can see below, the new block device sdb appeared in the list. Since the disk has just been created it doesn't have any partitions yet.
 ```shell
 ben@ben-virtual-machine:~/Desktop$ lsblk
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
@@ -254,8 +255,8 @@ Information: You may need to update /etc/fstab.
 ben@ben-virtual-machine:~/Desktop$ ls /dev/sdb*                           
 /dev/sdb  /dev/sdb1  /dev/sdb2
 ```
+4. Format the two partitions using the mkfs command.
 5. Create two empty directories in the /mnt directory as mount points, called part1 and part2. Mount the newly created file systems in these directories.
-
 6. How much free space is available on these filesystems? Use the df command to find out. What does the -h option do?
 **Answer:** /dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human friendly by displaying sizes in easy to read formats.
 ```shell
