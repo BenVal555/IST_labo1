@@ -115,6 +115,35 @@ I see a hexadecimal representation of data on the boot partition.
 ## TASK 2: PREPARE AND PARTITION A DISK
 
 Before you plug in the disk, list the existing block devices. Using the findmnt command find all the partitions that are already mounted.
+
+### Listing block devices
+```shell
+en@ben-virtual-machine:~/Desktop$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+fd0      2:0    1     4K  0 disk 
+loop0    7:0    0     4K  1 loop /snap/bare/5
+loop1    7:1    0  63.4M  1 loop /snap/core20/1974
+loop2    7:2    0  63.5M  1 loop /snap/core20/2015
+loop3    7:3    0  73.9M  1 loop /snap/core22/858
+loop4    7:4    0  73.9M  1 loop /snap/core22/864
+loop5    7:5    0 237.2M  1 loop /snap/firefox/2987
+loop6    7:6    0 485.5M  1 loop /snap/gnome-42-2204/120
+loop7    7:7    0 349.7M  1 loop /snap/gnome-3-38-2004/143
+loop8    7:8    0   497M  1 loop /snap/gnome-42-2204/141
+loop9    7:9    0  91.7M  1 loop /snap/gtk-common-themes/1535
+loop10   7:10   0  12.3M  1 loop /snap/snap-store/959
+loop11   7:11   0  53.3M  1 loop /snap/snapd/19457
+loop12   7:12   0  40.8M  1 loop /snap/snapd/20092
+loop13   7:13   0   452K  1 loop /snap/snapd-desktop-integration/83
+sda      8:0    0    20G  0 disk 
+├─sda1   8:1    0     1M  0 part 
+├─sda2   8:2    0   513M  0 part /boot/efi
+└─sda3   8:3    0  19.5G  0 part /var/snap/firefox/common/host-hunspell
+                                 /
+sr0     11:0    1 155.3M  0 rom  /media/ben/CDROM
+sr1     11:1    1   4.7G  0 rom  /media/ben/Ubuntu 22.04.3 LTS amd64
+```
+### Listing partitions
 ```shell
 ben@ben-virtual-machine:/usr/share/doc/zip$ findmnt --real
 TARGET                                   SOURCE     FSTYPE     OPTIONS
@@ -137,27 +166,120 @@ TARGET                                   SOURCE     FSTYPE     OPTIONS
 ```
 
 2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its partitions you just attached.
-(note ben: probablement à refaire)
+As we can see below, the new block device sdb appeared in the list.
 ```shell
-ben@ben-virtual-machine:~/Desktop$ findmnt --real
-TARGET                                   SOURCE     FSTYPE  OPTIONS
-/                                        /dev/sda3  ext4    rw,relatime,errors=remou
-├─/run/user/1000/doc                     portal     fuse.po rw,nosuid,nodev,relatime
-├─/snap/core22/858                       /dev/loop2 squashf ro,nodev,relatime,errors
-├─/snap/core20/1974                      /dev/loop1 squashf ro,nodev,relatime,errors
-├─/snap/bare/5                           /dev/loop0 squashf ro,nodev,relatime,errors
-├─/snap/firefox/2987                     /dev/loop3 squashf ro,nodev,relatime,errors
-├─/snap/gnome-3-38-2004/143              /dev/loop4 squashf ro,nodev,relatime,errors
-├─/snap/gnome-42-2204/120                /dev/loop6 squashf ro,nodev,relatime,errors
-├─/snap/snap-store/959                   /dev/loop7 squashf ro,nodev,relatime,errors
-├─/snap/gtk-common-themes/1535           /dev/loop5 squashf ro,nodev,relatime,errors
-├─/snap/snapd/19457                      /dev/loop8 squashf ro,nodev,relatime,errors
-├─/var/snap/firefox/common/host-hunspell /dev/sda3[/usr/share/hunspell]
-│                                                   ext4    ro,noexec,noatime,errors
-├─/snap/snapd-desktop-integration/83     /dev/loop9 squashf ro,nodev,relatime,errors
-├─/boot/efi                              /dev/sda2  vfat    rw,relatime,fmask=0077,d
-├─/mnt/istnewdisk                        /dev/sdb1  ext4    rw,relatime
-├─/media/ben/Ubuntu 22.04.3 LTS amd64    /dev/sr1   iso9660 ro,nosuid,nodev,relatime
-└─/media/ben/CDROM                       /dev/sr0   iso9660 ro,nosuid,nodev,relatime
+ben@ben-virtual-machine:~/Desktop$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+fd0      2:0    1     4K  0 disk 
+loop0    7:0    0  63.4M  1 loop /snap/core20/1974
+loop1    7:1    0     4K  1 loop /snap/bare/5
+loop2    7:2    0  73.9M  1 loop /snap/core22/858
+loop3    7:3    0  63.5M  1 loop /snap/core20/2015
+loop4    7:4    0  73.9M  1 loop /snap/core22/864
+loop5    7:5    0 237.2M  1 loop /snap/firefox/2987
+loop6    7:6    0 349.7M  1 loop /snap/gnome-3-38-2004/143
+loop7    7:7    0 485.5M  1 loop /snap/gnome-42-2204/120
+loop8    7:8    0  12.3M  1 loop /snap/snap-store/959
+loop9    7:9    0  40.8M  1 loop /snap/snapd/20092
+loop10   7:10   0  91.7M  1 loop /snap/gtk-common-themes/1535
+loop11   7:11   0   452K  1 loop /snap/snapd-desktop-integration/83
+loop12   7:12   0  53.3M  1 loop /snap/snapd/19457
+loop13   7:13   0   497M  1 loop /snap/gnome-42-2204/141
+sda      8:0    0    20G  0 disk 
+├─sda1   8:1    0     1M  0 part 
+├─sda2   8:2    0   513M  0 part /boot/efi
+└─sda3   8:3    0  19.5G  0 part /var/snap/firefox/common/host-hunspell
+                                 /
+sdb      8:16   0     1G  0 disk 
+sr0     11:0    1 155.3M  0 rom  /media/ben/CDROM
+sr1     11:1    1   4.7G  0 rom  /media/ben/Ubuntu 22.04.3 LTS amd64
 ```
 
+3. Create a partition table on the disk and create two partitions of equal size using the parted tool [...]
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo parted /dev/sdb
+GNU Parted 3.4
+Using /dev/sdb
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) print                                                            
+Error: /dev/sdb: unrecognised disk label
+Model: VMware, VMware Virtual S (scsi)                                    
+Disk /dev/sdb: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: unknown
+Disk Flags: 
+(parted) mktable msdos
+(parted) print free                                                       
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sdb: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End     Size    Type  File system  Flags
+        1024B  1074MB  1074MB        Free Space
+
+(parted) mkpart primary fat32 0 537MB                                      
+Warning: The resulting partition is not properly aligned for best performance:
+1s % 2048s != 0s
+Ignore/Cancel? Ignore                                                     
+(parted) print
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sdb: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End    Size   Type     File system  Flags
+ 1      512B   537MB  537MB  primary  fat32        lba
+
+(parted) mkpart primary ext4 537MB 1074MB
+Warning: The resulting partition is not properly aligned for best performance:
+1048829s % 2048s != 0s
+Ignore/Cancel? Ignore                                                     
+(parted) print                                                            
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sdb: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End     Size   Type     File system  Flags
+ 1      512B   537MB   537MB  primary  fat32        lba
+ 2      537MB  1074MB  537MB  primary  ext4         lba
+
+(parted) quit                                                             
+Information: You may need to update /etc/fstab.
+
+ben@ben-virtual-machine:~/Desktop$ ls /dev/sdb*                           
+/dev/sdb  /dev/sdb1  /dev/sdb2
+```
+5. Create two empty directories in the /mnt directory as mount points, called part1 and part2. Mount the newly created file systems in these directories.
+
+6. How much free space is available on these filesystems? Use the df command to find out. What does the -h option do?
+**Answer:** /dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human friendly by displaying sizes in easy to read formats.
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo mkfs.vfat /dev/sdb1
+[sudo] password for ben: 
+mkfs.fat 4.2 (2021-01-31)
+ben@ben-virtual-machine:~/Desktop$ sudo mkfs.ext4 /dev/sdb2
+mke2fs 1.46.5 (30-Dec-2021)
+Creating filesystem with 131040 4k blocks and 131072 inodes
+Filesystem UUID: 53580d06-65f6-4853-8a18-2bf64f74a0a0
+Superblock backups stored on blocks: 
+	32768, 98304
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+ben@ben-virtual-machine:~/Desktop$ sudo mkdir /mnt/part1
+ben@ben-virtual-machine:~/Desktop$ sudo mkdir /mnt/part2
+ben@ben-virtual-machine:~/Desktop$ sudo mount /dev/sdb1 /mnt/part1
+ben@ben-virtual-machine:~/Desktop$ sudo mount /dev/sdb2 /mnt/part2
+ben@ben-virtual-machine:~/Desktop$ df -h /mnt/part1 /mnt/part2
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdb1       512M  4.0K  512M   1% /mnt/part1
+/dev/sdb2       464M   24K  428M   1% /mnt/part2
+```
