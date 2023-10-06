@@ -409,6 +409,76 @@ This line has a particular way of referencing the partition, how?
 *It uses the PARTUUID to reference the root patition. This way it ensures that the correct partition is mounted as the
 root file system during system boot.*
 
+## Task 4: Manage an ext4 partition
+
+In this task you will test the integrity of an ext4 partition and repair it when it is damaged.
+Unmount the ext4 partition on the external disk.
+
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo umount /mnt/part2
+```
+
+Run a file system check using the fsck command.
+
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo fsck -t ext4 -c /dev/sdb2
+fsck from util-linux 2.37.2
+e2fsck 1.46.5 (30-Dec-2021)
+Checking for bad blocks (read-only test):   0.00% done, 0:00 elapsed. (0/0/0 errdone                                                 
+/dev/sdb2: Updating bad block inode.
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+
+/dev/sdb2: ***** FILE SYSTEM WAS MODIFIED *****
+/dev/sdb2: 11/131072 files (0.0% non-contiguous), 12497/131040 blocks
+```
+
+Add the -f option to the command to force a complete verification.
+
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo fsck -t ext4 -c /dev/sdb2 -f
+fsck from util-linux 2.37.2
+e2fsck 1.46.5 (30-Dec-2021)
+Checking for bad blocks (read-only test):   0.00% done, 0:00 elapsed. (0/0/0 errdone                                                 
+/dev/sdb2: Updating bad block inode.
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+
+/dev/sdb2: ***** FILE SYSTEM WAS MODIFIED *****
+/dev/sdb2: 11/131072 files (0.0% non-contiguous), 12497/131040 blocks
+```
+
+Display the file system structure with the dumpe2fs command. How many inodes are unused?
+
+```shell
+Free inodes:              131061
+```
+
+Intentionally corrupt the file system by overwriting 4 MB of data, starting 10 kB in:
+sudo dd if=/dev/zero of=<block device> bs=1k seek=10 count=4k
+
+Try to mount the partition. You should get an error message. Repair the file system with the fsck command.
+
+*Before repairing*
+
+```shell
+ben@ben-virtual-machine:~/Desktop$ sudo dd if=/dev/zero of=/dev/sdb2 bs=1k seek=10 count=4k
+4096+0 records in
+4096+0 records out
+4194304 bytes (4.2 MB, 4.0 MiB) copied, 0.113022 s, 37.1 MB/s
+ben@ben-virtual-machine:~/Desktop$ sudo mount /dev/sdb2 /mnt/part2
+mount: /mnt/part2: wrong fs type, bad option, bad superblock on /dev/sdb2, missing codepage or helper program, or other error.
+```
+*After repairing, mounting and checking with findmnt --real*
+```shell
+├─/mnt/part2                             /dev/sdb2   ext4    rw,relatime
+```
 ## TASK 5: CREATE A FILE SYSTEM IN A FILE
 
 1. Create a 100 MB file using dd:
