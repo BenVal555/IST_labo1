@@ -42,7 +42,8 @@ ben@ben-virtual-machine:/dev$ sudo hdparm -t /dev/sda2
  Timing buffered disk reads: 512 MB in  1.45 seconds = 353.11 MB/sec
 ```
 
-2. Convince yourself that the special file representing the root (/) partition can be read just like any other file. As it contains binary data, just opening it with less will mess up the terminal, so use the xxd hexdump utility.
+2. Convince yourself that the special file representing the root (/) partition can be read just like any other file. As
+it contains binary data, just opening it with less will mess up the terminal, so use the xxd hexdump utility.
 
 To see how xxd works, create a small text file and open it with xxd -a.
 ```shell
@@ -51,16 +52,20 @@ ben@ben-virtual-machine:~/Desktop$ xxd -a testfile.txt
 00000000: 4865 6c6c 6f2c 2057 6f72 6c64 210a       Hello, World!.
 ```
 
-Now open the special file with the same command. You may pipe its output into less. What do you see? If your root partition uses LVM (verify with lsblk), you should see text strings containing volume group configuration information.
+Now open the special file with the same command. You may pipe its output into less. What do you see? If your root
+partition uses LVM (verify with lsblk), you should see text strings containing volume group configuration information.
 
 *We can see a hexadecimal representation of data on the boot partition.*
 
-3. As the special file represents all the blocks of a partition, the content of all files of the root partition should be there. Pick a text file at random (for example a file in /usr/share/doc/) and try to find its content in the special file.
+3. As the special file represents all the blocks of a partition, the content of all files of the root partition should
+be there. Pick a text file at random (for example a file in /usr/share/doc/) and try to find its content in the special
+file.
 
 
 ## TASK 2: PREPARE AND PARTITION A DISK
 
-Before you plug in the disk, list the existing block devices. Using the findmnt command find all the partitions that are already mounted.
+Before you plug in the disk, list the existing block devices. Using the findmnt command find all the partitions that
+are already mounted.
 
 ### Listing block devices
 ```shell
@@ -111,9 +116,11 @@ TARGET                                   SOURCE     FSTYPE     OPTIONS
                                                     ext4       ro,noexec,noatime,errors=remount-ro
 ```
 
-2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its partitions you just attached.
+2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its
+partitions you just attached.
 
-*As we can see below, the new block device sdb appeared in the list. Since the disk has just been created it doesn't have any partitions yet.*
+*As we can see below, the new block device sdb appeared in the list. Since the disk has just been created it doesn't
+have any partitions yet.*
 ```shell
 ben@ben-virtual-machine:~/Desktop$ lsblk
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
@@ -202,10 +209,12 @@ ben@ben-virtual-machine:~/Desktop$ ls /dev/sdb*
 /dev/sdb  /dev/sdb1  /dev/sdb2
 ```
 4. Format the two partitions using the mkfs command.
-5. Create two empty directories in the /mnt directory as mount points, called part1 and part2. Mount the newly created file systems in these directories.
+5. Create two empty directories in the /mnt directory as mount points, called part1 and part2. Mount the newly created
+file systems in these directories.
 6. How much free space is available on these filesystems? Use the df command to find out. What does the -h option do?
 
-*/dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human friendly by displaying sizes in easy to read formats.*
+*/dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human
+friendly by displaying sizes in easy to read formats.*
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo mkfs.vfat /dev/sdb1
 [sudo] password for ben: 
@@ -232,7 +241,9 @@ Filesystem      Size  Used Avail Use% Mounted on
 /dev/sdb2       464M   24K  428M   1% /mnt/part2
 ```
 ## TASK 3: EXPLORE THE FILE SYSTEM SUPPORT IN THE KERNEL
-Find out which file systems the kernel supports right now. The kernel makes information about itself available to userspace programs in a pseudo file system that is mounted at /proc. The files in that file system describe kernel objects.
+Find out which file systems the kernel supports right now. The kernel makes information about itself available to
+userspace programs in a pseudo file system that is mounted at /proc. The files in that file system describe kernel
+objects.
 
 List the content of /proc. What is the version of the kernel in /proc/version?
 
@@ -241,7 +252,9 @@ List the content of /proc. What is the version of the kernel in /proc/version?
 ben@ben-virtual-machine:~/Desktop$ cat /proc/version
 Linux version 6.2.0-33-generic (buildd@lcy02-amd64-073) (x86_64-linux-gnu-gcc-11 (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #33~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  7 10:33:52 UTC 2
 ```
-The directories with numbers represent the running processes. The numbers are the process ids. Display the process id of your bash session with echo $$. List the information in the corresponding directory. What was the command line that started this process (look in cmdline)?
+The directories with numbers represent the running processes. The numbers are the process ids. Display the process id
+of your bash session with echo $$. List the information in the corresponding directory. What was the command line that
+started this process (look in cmdline)?
 
 Below is the process id of my bash session.
 ```shell
@@ -292,7 +305,8 @@ nodev	binfmt_misc
 	iso9660
 ```
 
-Can you find the proc filesystem itself in the list? How is it tagged? All file systems with that tag are pseudo file systems.
+Can you find the proc filesystem itself in the list? How is it tagged? All file systems with that tag are pseudo file
+systems.
 
 *Yes. It is tagged "nodev".*
 
@@ -308,7 +322,8 @@ fuseblk
 iso9660
 ```
 
-Find out which file systems the kernel is able to support by looking at the available kernel modules. The files containing kernel modules can be found at lib/modules/<kernel version>/kernel/fs. List them.
+Find out which file systems the kernel is able to support by looking at the available kernel modules. The files
+containing kernel modules can be found at lib/modules/<kernel version>/kernel/fs. List them.
 ```shell
 ben@ben-virtual-machine:~/Desktop$ ls /lib/modules/6.2.0-33-generic/kernel/fs
 9p      bfs             coda    f2fs      hfs      ksmbd       nfsd    omfs       quota         ubifs
@@ -319,7 +334,10 @@ autofs  ceph            erofs   fuse      jffs2    nfs         ntfs3   qnx4     
 befs    cifs            exfat   gfs2      jfs      nfs_common  ocfs2   qnx6       sysv          zonefs
 ```
 
-When a new disk is inserted the kernel knows which file system to activate by looking at a label that indicates the type of file system. That label is part of the partition metadata (called signature). Use the blkid command to list the metadata of all known partitions (mounted or not). Note that you might need to run the command with admin permissions to display all partitions metadata.
+When a new disk is inserted the kernel knows which file system to activate by looking at a label that indicates the
+type of file system. That label is part of the partition metadata (called signature). Use the blkid command to list the
+metadata of all known partitions (mounted or not). Note that you might need to run the command with admin permissions
+to display all partitions metadata.
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo blkid
 [sudo] password for ben: 
@@ -356,10 +374,13 @@ Verify that the partitions you created are labeled correctly.
 
 There is another piece of information in the partition metadata. What does it do?
 
-We can see it has a PARTUUID (Partition Universally Unique Identifier). The PARTUUID is generated based on the disk's unique identifier and the partition number, and it is used to uniquely identify partitions on a disk.
+We can see it has a PARTUUID (Partition Universally Unique Identifier). The PARTUUID is generated based on the disk's
+unique identifier and the partition number, and it is used to uniquely identify partitions on a disk.
 
 
-4. An older way for the kernel to find out which file system to activate is the file /etc/fstab. This file lists all the file systems that should be mounted when the system boots. It indicates the special file that represents the partition, the directory where it should be mounted (the mount point), and the file system to activate.
+4. An older way for the kernel to find out which file system to activate is the file /etc/fstab. This file lists all
+the file systems that should be mounted when the system boots. It indicates the special file that represents the
+partition, the directory where it should be mounted (the mount point), and the file system to activate.
 
 List the content of /etc/fstab.
 ```shell
@@ -385,4 +406,117 @@ UUID=b2a1a2f6-0070-45c6-ba4c-29595b38ffad /               ext4    errors=remount
 
 This line has a particular way of referencing the partition, how?
 
-*It uses the PARTUUID to reference the root patition. This way it ensures that the correct partition is mounted as the root file system during system boot.*
+*It uses the PARTUUID to reference the root patition. This way it ensures that the correct partition is mounted as the
+root file system during system boot.*
+
+## TASK 5: CREATE A FILE SYSTEM IN A FILE
+
+1. Create a 100 MB file using dd:
+```shell
+ubuntu@primary:~$ dd if=/dev/zero of=/tmp/bigfile bs=1M count=100
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 0.0925215 s, 1.1 GB/s
+```
+
+2. Find the next available loopback device:
+```shell
+ubuntu@primary:~$ losetup -f
+/dev/loop5
+```
+
+3. Associate the loopback device with the file:
+```shell
+ubuntu@primary:~$ sudo losetup /dev/loop5 /tmp/bigfile
+```
+
+4. Verify that the association is OK:
+```shell
+ubuntu@primary:~$ losetup -a
+/dev/loop1: []: (/var/lib/snapd/snaps/multipass-sshfs_147.snap)
+/dev/loop6: []: (/var/lib/snapd/snaps/snapd_20298.snap)
+/dev/loop4: []: (/var/lib/snapd/snaps/core20_2019.snap)
+/dev/loop2: []: (/var/lib/snapd/snaps/bare_5.snap)
+/dev/loop0: []: (/var/lib/snapd/snaps/snapd_20102.snap)
+/dev/loop5: []: (/tmp/bigfile)
+/dev/loop3: []: (/var/lib/snapd/snaps/lxd_24326.snap)
+```
+
+5. Create an ext4 file system on block device /dev/loop6. Create a mountpoint in /mnt/bigfile. Mount the file system on
+the mountpoint. How does findmnt show the new file system?
+
+Creation of the ext4 file system on '/dev/loop5':
+```shell
+ubuntu@primary:~$ sudo mkfs.ext4 /dev/loop5
+mke2fs 1.46.5 (30-Dec-2021)
+Discarding device blocks: done                            
+Creating filesystem with 25600 4k blocks and 25600 inodes
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+
+Creation of the mount point '/mnt/bigfile':
+```shell
+ubuntu@primary:~$ sudo mkdir -p /mnt/bigfile
+```
+
+Mounting the ext4 file system on the mount point:
+```shell
+ubuntu@primary:~$ sudo mount /dev/loop5 /mnt/bigfile
+```
+
+Checking how 'findmnt' shows the new file system:
+```shell
+ubuntu@primary:~$ findmnt /mnt/bigfile
+TARGET       SOURCE     FSTYPE OPTIONS
+/mnt/bigfile /dev/loop5 ext4   rw,relatime
+```
+
+6. Create a few files in the file system with unique strings. By searching the content of bigfile, can you find the
+strings? Use the sync command to force the kernel to write buffered data to disk.
+
+Creation of unique Strings:
+```shell
+ubuntu@primary:~$ echo "Test 123" > /mnt/bigfile/file1.txt
+ubuntu@primary:~$ echo "Quick brown fox" > /mnt/bigfile/file2.txt
+```
+
+We can find the Strings created previously:
+```shell
+ubuntu@primary:~$ sudo grep -rl "Test" /mnt/bigfile
+/mnt/bigfile/file1.txt
+
+ubuntu@primary:~$ sudo grep -rl "fox" /mnt/bigfile
+/mnt/bigfile/file2.txt
+```
+
+Command to force the kernel to write buffered data to disk:
+```shell
+ubuntu@primary:~$ sync
+```
+
+7. Undo everything:
+
+Unmounting the file system:
+```shell
+ubuntu@primary:~$ sudo umount /mnt/bigfile
+```
+
+Freeing the Loopback Device:
+```shell
+ubuntu@primary:~$ sudo losetup -d /dev/loop5
+```
+
+Verifying that the association is no longer there:
+```shell
+ubuntu@primary:~$ losetup -a
+/dev/loop1: []: (/var/lib/snapd/snaps/multipass-sshfs_147.snap)
+/dev/loop6: []: (/var/lib/snapd/snaps/snapd_20298.snap)
+/dev/loop4: []: (/var/lib/snapd/snaps/core20_2019.snap)
+/dev/loop2: []: (/var/lib/snapd/snaps/bare_5.snap)
+/dev/loop0: []: (/var/lib/snapd/snaps/snapd_20102.snap)
+/dev/loop3: []: (/var/lib/snapd/snaps/lxd_24326.snap)
+```
