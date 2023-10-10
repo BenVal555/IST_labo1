@@ -1,5 +1,7 @@
 # IST_labo1
 
+Authors: Urizar Pablo, Valzino Benjamin (L01GrD)
+
 ## TASK 1 : EXPLORE BLOCK DEVICES AND FILESYSTEMS
 1. Using the lsblk command, list the existing block devices
 
@@ -33,7 +35,10 @@ It's mounted on sda2.
 ben@ben-virtual-machine:/dev$ ls -l sda2
 brw-rw---- 1 root disk 8, 2 Okt  1 11:29 sda2
 ```
-With hdparm -t do a timing test on the boot partition. What throughput do you get?
+*With hdparm -t do a timing test on the boot partition. What throughput do you get?*
+
+We get a throughput of roughly 353MB/sec
+
 ```shell
 ben@ben-virtual-machine:/dev$ sudo hdparm -t /dev/sda2
 [sudo] password for ben: 
@@ -52,22 +57,22 @@ ben@ben-virtual-machine:~/Desktop$ xxd -a testfile.txt
 00000000: 4865 6c6c 6f2c 2057 6f72 6c64 210a       Hello, World!.
 ```
 
-Now open the special file with the same command. You may pipe its output into less. What do you see? If your root
-partition uses LVM (verify with lsblk), you should see text strings containing volume group configuration information.
+*Now open the special file with the same command. You may pipe its output into less. What do you see? If your root
+partition uses LVM (verify with lsblk), you should see text strings containing volume group configuration information.*
 
-*We can see a hexadecimal representation of data on the boot partition.*
+We can see a hexadecimal representation of data on the boot partition.
 
 3. As the special file represents all the blocks of a partition, the content of all files of the root partition should
 be there. Pick a text file at random (for example a file in /usr/share/doc/) and try to find its content in the special
 file.
-
 
 ## TASK 2: PREPARE AND PARTITION A DISK
 
 Before you plug in the disk, list the existing block devices. Using the findmnt command find all the partitions that
 are already mounted.
 
-### Listing block devices
+Listing block devices
+
 ```shell
 en@ben-virtual-machine:~/Desktop$ lsblk
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
@@ -94,7 +99,8 @@ sda      8:0    0    20G  0 disk
 sr0     11:0    1 155.3M  0 rom  /media/ben/CDROM
 sr1     11:1    1   4.7G  0 rom  /media/ben/Ubuntu 22.04.3 LTS amd64
 ```
-### Listing partitions
+Listing partitions
+ 
 ```shell
 ben@ben-virtual-machine:/usr/share/doc/zip$ findmnt --real
 TARGET                                   SOURCE     FSTYPE     OPTIONS
@@ -116,11 +122,12 @@ TARGET                                   SOURCE     FSTYPE     OPTIONS
                                                     ext4       ro,noexec,noatime,errors=remount-ro
 ```
 
-2. List again the block devices. Which new block devices and special files appeared? These represent the disk and its
-partitions you just attached.
+2. *List again the block devices. Which new block devices and special files appeared? These represent the disk and its
+partitions you just attached.*
 
-*As we can see below, the new block device sdb appeared in the list. Since the disk has just been created it doesn't
-have any partitions yet.*
+As we can see below, the new block device sdb appeared in the list. Since the disk has just been created it doesn't
+have any partitions yet.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ lsblk
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
@@ -150,6 +157,7 @@ sr1     11:1    1   4.7G  0 rom  /media/ben/Ubuntu 22.04.3 LTS amd64
 ```
 
 3. Create a partition table on the disk and create two partitions of equal size using the parted tool [...]
+4. 
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo parted /dev/sdb
 GNU Parted 3.4
@@ -209,12 +217,15 @@ ben@ben-virtual-machine:~/Desktop$ ls /dev/sdb*
 /dev/sdb  /dev/sdb1  /dev/sdb2
 ```
 4. Format the two partitions using the mkfs command.
+
 5. Create two empty directories in the /mnt directory as mount points, called part1 and part2. Mount the newly created
 file systems in these directories.
-6. How much free space is available on these filesystems? Use the df command to find out. What does the -h option do?
 
-*/dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human
-friendly by displaying sizes in easy to read formats.*
+6. *How much free space is available on these filesystems? Use the df command to find out. What does the -h option do?*
+
+/dev/sdb1 has 512M available and /dev/sdb2 has 464M available. The -h option is used to make the ouput more human
+friendly by displaying sizes in easy to read formats.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo mkfs.vfat /dev/sdb1
 [sudo] password for ben: 
@@ -245,9 +256,10 @@ Find out which file systems the kernel supports right now. The kernel makes info
 userspace programs in a pseudo file system that is mounted at /proc. The files in that file system describe kernel
 objects.
 
-List the content of /proc. What is the version of the kernel in /proc/version?
+*List the content of /proc. What is the version of the kernel in /proc/version?*
 
-*The version is 6.2.0-33-generic (Linux).*
+The version is 6.2.0-33-generic (Linux).
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ cat /proc/version
 Linux version 6.2.0-33-generic (buildd@lcy02-amd64-073) (x86_64-linux-gnu-gcc-11 (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #33~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  7 10:33:52 UTC 2
@@ -257,18 +269,21 @@ of your bash session with echo $$. List the information in the corresponding dir
 started this process (look in cmdline)?
 
 Below is the process id of my bash session.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ echo $$
 2302
 ```
 
 Command line that started this process: bash, as seen below
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ cat /proc/2302/cmdline
 bash
 ```
 
 The kernel lists the file systems it supports right now file filesystems. List them.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ cat /proc/filesystems 
 nodev	sysfs
@@ -305,12 +320,13 @@ nodev	binfmt_misc
 	iso9660
 ```
 
-Can you find the proc filesystem itself in the list? How is it tagged? All file systems with that tag are pseudo file
-systems.
+*Can you find the proc filesystem itself in the list? How is it tagged? All file systems with that tag are pseudo file
+systems.*
 
-*Yes. It is tagged "nodev".*
+Yes. It is tagged "nodev".
 
 List the real (non-pseudo) file systems.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ cat /proc/filesystems | grep -v "nodev" | awk '{print $NF}'
 ext3
@@ -324,6 +340,7 @@ iso9660
 
 Find out which file systems the kernel is able to support by looking at the available kernel modules. The files
 containing kernel modules can be found at lib/modules/<kernel version>/kernel/fs. List them.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ ls /lib/modules/6.2.0-33-generic/kernel/fs
 9p      bfs             coda    f2fs      hfs      ksmbd       nfsd    omfs       quota         ubifs
@@ -338,6 +355,7 @@ When a new disk is inserted the kernel knows which file system to activate by lo
 type of file system. That label is part of the partition metadata (called signature). Use the blkid command to list the
 metadata of all known partitions (mounted or not). Note that you might need to run the command with admin permissions
 to display all partitions metadata.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo blkid
 [sudo] password for ben: 
@@ -370,9 +388,9 @@ Verify that the partitions you created are labeled correctly.
 /dev/sdb2: UUID="53580d06-65f6-4853-8a18-2bf64f74a0a0" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="886d0b38-02"
 /dev/sdb1: UUID="2EF0-D8A9" BLOCK_SIZE="512" TYPE="vfat" PARTUUID="886d0b38-01"
 ```
-*Everything seems to be as expected.*
+Note: Everything seems to be as expected.
 
-There is another piece of information in the partition metadata. What does it do?
+*There is another piece of information in the partition metadata. What does it do?*
 
 We can see it has a PARTUUID (Partition Universally Unique Identifier). The PARTUUID is generated based on the disk's
 unique identifier and the partition number, and it is used to uniquely identify partitions on a disk.
@@ -383,6 +401,7 @@ the file systems that should be mounted when the system boots. It indicates the 
 partition, the directory where it should be mounted (the mount point), and the file system to activate.
 
 List the content of /etc/fstab.
+
 ```shell
 ben@ben-virtual-machine:~/Desktop$ cat /etc/fstab
 # /etc/fstab: static file system information.
@@ -399,17 +418,20 @@ UUID=614D-731C  /boot/efi       vfat    umask=0077      0       1
 /swapfile                                 none            swap    sw              0       0
 /dev/fd0        /media/floppy0  auto    rw,user,noauto,exec,utf8 0       0
 ```
-What line is responsible for mounting the root (/) file system?
+*What line is responsible for mounting the root (/) file system?*
+
+The following line is:
+
 ```shell
 UUID=b2a1a2f6-0070-45c6-ba4c-29595b38ffad /               ext4    errors=remount-ro 0       1
 ```
 
-This line has a particular way of referencing the partition, how?
+*This line has a particular way of referencing the partition, how?*
 
-*It uses the PARTUUID to reference the root patition. This way it ensures that the correct partition is mounted as the
-root file system during system boot.*
+It uses the PARTUUID to reference the root patition. This way it ensures that the correct partition is mounted as the
+root file system during system boot.
 
-## Task 4: Manage an ext4 partition
+## TASK 4: MANAGE AN EXT4 PARTITION
 
 In this task you will test the integrity of an ext4 partition and repair it when it is damaged.
 Unmount the ext4 partition on the external disk.
@@ -465,7 +487,7 @@ sudo dd if=/dev/zero of=<block device> bs=1k seek=10 count=4k
 
 Try to mount the partition. You should get an error message. Repair the file system with the fsck command.
 
-*Before repairing*
+Before repairing
 
 ```shell
 ben@ben-virtual-machine:~/Desktop$ sudo dd if=/dev/zero of=/dev/sdb2 bs=1k seek=10 count=4k
@@ -475,7 +497,8 @@ ben@ben-virtual-machine:~/Desktop$ sudo dd if=/dev/zero of=/dev/sdb2 bs=1k seek=
 ben@ben-virtual-machine:~/Desktop$ sudo mount /dev/sdb2 /mnt/part2
 mount: /mnt/part2: wrong fs type, bad option, bad superblock on /dev/sdb2, missing codepage or helper program, or other error.
 ```
-*After repairing, mounting and checking with findmnt --real*
+After repairing, mounting and checking with findmnt --real
+
 ```shell
 ├─/mnt/part2                             /dev/sdb2   ext4    rw,relatime
 ```
@@ -512,8 +535,8 @@ ubuntu@primary:~$ losetup -a
 /dev/loop3: []: (/var/lib/snapd/snaps/lxd_24326.snap)
 ```
 
-5. Create an ext4 file system on block device /dev/loop6. Create a mountpoint in /mnt/bigfile. Mount the file system on
-the mountpoint. How does findmnt show the new file system?
+5. *Create an ext4 file system on block device /dev/loop6. Create a mountpoint in /mnt/bigfile. Mount the file system on
+the mountpoint. How does findmnt show the new file system?*
 
 Creation of the ext4 file system on '/dev/loop5':
 ```shell
@@ -545,8 +568,8 @@ TARGET       SOURCE     FSTYPE OPTIONS
 /mnt/bigfile /dev/loop5 ext4   rw,relatime
 ```
 
-6. Create a few files in the file system with unique strings. By searching the content of bigfile, can you find the
-strings? Use the sync command to force the kernel to write buffered data to disk.
+6. *Create a few files in the file system with unique strings. By searching the content of bigfile, can you find the
+strings? Use the sync command to force the kernel to write buffered data to disk.*
 
 Creation of unique Strings:
 ```shell
